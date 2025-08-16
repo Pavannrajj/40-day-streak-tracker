@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>40-Day Challenge Tracker</title>
+    <meta name="description" content="A calm, motivational 40-day streak tracker">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'bg': '#F6F7F9',
+                        'surface': '#FFFFFF',
+                        'ink': '#0F172A',
+                        'muted': '#64748B',
+                        'primary': '#6CA7E5',
+                        'accent': '#7AC4A8',
+                        'sand': '#EFD8A1',
+                        'success': '#22C55E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #F6F7F9;
+            --surface: #FFFFFF;
+            --ink: #0F172A;
+            --muted: #64748B;
+            --primary: #6CA7E5;
+            --accent: #7AC4A8;
+            --sand: #EFD8A1;
+            --success: #22C55E;
+        }
+
+        .dark {
+            --bg: #0B1220;
+            --surface: #0F172A;
+            --ink: #E5E7EB;
+            --muted: #94A3B8;
+        }
+
+        .high-contrast {
+            --bg: #000000;
+            --surface: #FFFFFF;
+            --ink: #000000;
+            --muted: #666666;
+            --primary: #0000FF;
+            --accent: #008000;
+        }
+
+        .high-contrast.dark {
+            --bg: #FFFFFF;
+            --surface: #000000;
+            --ink: #FFFFFF;
+            --muted: #CCCCCC;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .card {
+            background-color: var(--surface);
+            border: 1px solid rgba(100, 116, 139, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--muted);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: var(--surface);
+        }
+
+        .checkbox:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .checkbox:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .checkbox.checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            animation: checkScale 0.2s ease;
+        }
+
+        .checkbox.milestone {
+            animation: milestoneFlash 0.6s ease;
+        }
+
+        @keyframes checkScale {
+            0% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes milestoneFlash {
+            0%, 100% { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+            50% { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent); }
+        }
+
+        .progress-bar {
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .note-input {
+            background-color: var(--surface);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            color: var(--ink);
+        }
+
+        .note-input:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 1px;
+        }
+
+        .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            color: var(--ink);
+        }
+
+        .toast {
+            background-color: var(--surface);
+            border: 1px solid var(--accent);
+            color: var(--ink);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn-secondary {
+            background-color: var(--muted);
+        }
+
+        .toggle-btn {
+            background-color: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--ink);
+        }
+
+        .toggle-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen font-inter">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-semibold mb-2" style="color: var(--ink);">40-Day Challenge Tracker</h1>
+            <p class="text-xl mb-8" style="color: var(--muted);">Consistency over intensity.</p>
+            
+            <!-- Controls -->
+            <div class="flex justify-center gap-4 mb-8 flex-wrap">
+                <button id="darkModeToggle" class="toggle-btn px-4 py-2 rounded-full text-sm font-medium" tabindex="0">
+                    🌙 Dark Mode
+                </button>
+                <button id="highContrastToggle" class="toggle-btn px-4 py-2 rounded-full text-sm font-medium" tabindex="0">
+                    ⚡ High Contrast
+                </button>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="card rounded-2xl p-6 mb-8 max-w-2xl mx-auto">
+                <div class="mb-4">
+                    <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+                        <div id="progressBar" class="progress-bar h-3 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div id="completedCount" class="text-2xl font-semibold" style="color: var(--primary);">0</div>
+                        <div class="text-sm" style="color: var(--muted);">/ 40 done</div>
+                    </div>
+                    <div>
+                        <div id="currentStreak" class="text-2xl font-semibold" style="color: var(--accent);">0</div>
+                        <div class="text-sm" style="color: var(--muted);">Current streak</div>
+                    </div>
+                    <div>
+                        <div id="bestStreak" class="text-2xl font-semibold" style="color: var(--sand);">0</div>
+                        <div class="text-sm" style="color: var(--muted);">Best streak</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motivation -->
+            <div class="mb-8">
+                <p id="motivationText" class="text-lg italic" style="color: var(--muted);">Show up today.</p>
+            </div>
+        </header>
+
+        <!-- Calendar Grid -->
+        <main>
+            <div id="calendarGrid" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+                <!-- Days will be generated by JavaScript -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center">
+            <p class="text-lg mb-6" style="color: var(--muted);">Small steps, every day.</p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <button id="exportBtn" class="btn">Export JSON</button>
+                <button id="importBtn" class="btn">Import JSON</button>
+                <input type="file" id="importFile" accept=".json" class="hidden">
+                <button id="resetBtn" class="btn btn-secondary">Reset All</button>
+                <button id="printBtn" class="btn btn-secondary">Print</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Reset Modal -->
+    <div id="resetModal" class="modal fixed inset-0 flex items-center justify-center hidden z-50">
+        <div class="modal-content rounded-2xl p-6 max-w-md mx-4">
+            <h3 class="text-xl font-semibold mb-4">Reset All Data</h3>
+            <p class="mb-4" style="color: var(--muted);">Type RESET to erase all data.</p>
+            <input type="text" id="resetInput" class="note-input w-full p-3 rounded-lg mb-4" placeholder="Type RESET">
+            <div class="flex gap-3">
+                <button id="confirmReset" class="btn flex-1">Confirm</button>
+                <button id="cancelReset" class="btn btn-secondary flex-1">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast fixed top-4 right-4 p-4 rounded-lg shadow-lg hidden z-50">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

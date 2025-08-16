@@ -1,0 +1,13 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node modules (not needed but safe)
+node_modules/
+
+# Build/Cache
+dist/
+.cache/
