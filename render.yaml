@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: streak-tracker
+    env: static
+    buildCommand: ""
+    staticPublishPath: .
